@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MyDialogTheme" parent="android:Theme.Dialog">
+        <item name="android:background">#ffffff</item>
+        <item name ="android:titleTextColor">#000000</item>
+        <item name ="android:dialogTitle">Comments</item>
+    </style>
+</resources>
