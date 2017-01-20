@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class MyActivity extends Activity {
+public class IssueList extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

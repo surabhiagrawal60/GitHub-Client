@@ -19,7 +19,7 @@ public class MyComments extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
-//        this.setTitle("Comments");
+
         setContentView(R.layout.activity_cm);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.comment_title);
 

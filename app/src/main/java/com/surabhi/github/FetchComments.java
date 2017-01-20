@@ -28,6 +28,7 @@ public class FetchComments extends Fragment {
     ListView commList;
     ArrayAdapter<Comments> adapter;
     String url;
+    static String TAG = "FetchComments";
 
     public FetchComments()
     {
@@ -126,27 +127,22 @@ public class FetchComments extends Fragment {
     }
 
     static List<Comments> fetchComments(String commentsUrl) throws MalformedURLException {
-        Log.d("fetchComments", "fetchComments()");
-        Log.d("fetchComments", "url:" + commentsUrl);
+        Log.d(TAG, "fetchComments()");
+        Log.d(TAG, "url:" + commentsUrl);
         String raw = RemoteData.readContents(commentsUrl);
 
         if (raw == null)
         {
-            Log.d("fetchComments", "response = null");
+            Log.d(TAG, "response = null");
             return null;
         }
 
-        Log.d("fetchComments", "Response: "+raw);
+        Log.d(TAG, "Response: "+raw);
         List<Comments> list=new ArrayList<Comments>();
         try{
             JSONArray data=new JSONArray(raw);
-//
 
-            Log.d("fetchComments", "data.Json[]"+ data.toString());
-//            Log.d(TAG, "children.Json[]"+ children.toString());
-            //Using this property we can fetch the next set of
-            //posts from the same subreddit
-//            after=data.getString("after");
+            Log.d(TAG, "data.Json[]"+ data.toString());
 
             for(int i=0;i<data.length();i++){
                 JSONObject cur=data.getJSONObject(i);
@@ -155,10 +151,10 @@ public class FetchComments extends Fragment {
                 JSONObject jsonObject = cur.getJSONObject("user");
                 c.comment_by = jsonObject.getString("login");
                 list.add(c);
-                Log.d("fetchComments","children.json[i]:"+ c);
+                Log.d(TAG,"children.json[i]:"+ c);
             }
         }catch(Exception e){
-            Log.e("PostFragment", e.toString());
+            Log.e(TAG, e.toString());
         }
         return list;
     }

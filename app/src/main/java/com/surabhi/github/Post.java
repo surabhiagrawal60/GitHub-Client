@@ -5,6 +5,7 @@ import java.util.Date;
 /**
  * Created by Surabhi Agrawal on 1/19/2017.
  */
+// Model Class for Data in the form of Json
 public class Post {
 
     Date updated_at;
@@ -63,38 +64,6 @@ public class Post {
     {
         this.commentsUrl = _url;
     }
-//
-//    long getUpdateTime()
-//    {
-//        Date currentTime = new Date();
-//
-//
-//        long diff = currentTime.getTime() - updated_at.getTime();
-//
-//        long diffSeconds = diff / 1000 % 60;
-//        long diffMinutes = diff / (60 * 1000) % 60;
-//        long diffHours = diff / (60 * 60 * 1000) % 24;
-//        long diffDays = diff / (24 * 60 * 60 * 1000);
-//
-//        if (diffDays == 0)
-//            if (diffHours == 0)
-//                if(diffMinutes ==0)
-//                    return 0;
-//                else if (diffMinutes == 1)
-//                    return diffMinutes;
-//                else
-//                    return diffMinutes ;
-//            else if (diffHours == 1)
-//                return diffHours;
-//            else
-//                return diffHours;
-//        else if (diffDays == 1)
-//            return diffDays;
-//        else
-//            return diffDays;
-//
-//    }
-
     Date getUpdated_at()
     {
         return this.updated_at;

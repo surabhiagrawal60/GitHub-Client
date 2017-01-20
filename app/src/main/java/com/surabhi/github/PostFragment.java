@@ -1,7 +1,10 @@
 package com.surabhi.github;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,6 +25,7 @@ import java.util.List;
 /**
  * Created by Surabhi Agrawal on 1/19/2017.
  */
+// ListView with all issues in recently updated order
 public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener  {
     ListView postList;
     ArrayAdapter<Post> adapter;
@@ -31,7 +35,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     PostHolder postHolder;
     String TAG = "PostFragment";
     SwipeRefreshLayout swipeLayout;
-
+    int page;
 
 
     public PostFragment()
@@ -65,17 +69,29 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Post post = adapter.getItem(position);
-                Log.d("ITEMPOSITION", position + "");
-                Log.d("POST OBJECT", post.commentsUrl + "");
+                Log.d(TAG,"ITEMPOSITION:" + position + "");
+                Log.d(TAG, "POST OBJECT" + post.commentsUrl + "");
                 int count = post.getComments();
-                if (count == 0) {
-                    Toast.makeText(getActivity(), "No Comments for this Issue", Toast.LENGTH_LONG).show();
-                } else {
+
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null &&
+                        activeNetwork.isConnectedOrConnecting();
+
+          if (count == 0 || !isConnected) {
+              if(count == 0 ) {
+                  Toast.makeText(getActivity(), "No Comments for this Issue", Toast.LENGTH_LONG).show();
+              }
+              else if(!isConnected){
+                  Toast.makeText(getActivity(), "Please check the internet connection and try again!", Toast.LENGTH_LONG).show();
+              }
+          } else {
                     String url = post.commentsUrl;
                     if (url == null) {
-                        Log.d("URL_Comments", null);
+                        Log.d(TAG , "URL_Comments"+ null);
                     }
-                    Log.d("URL", url);
+                    Log.d(TAG,"URL"+ url);
                     Intent i;
                     i = new Intent(getActivity(), MyComments.class);
                     // sending data to new activity
@@ -97,7 +113,17 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onActivityCreated(Bundle savedInstance){
         super.onActivityCreated(savedInstance);
-        initialize();
+
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if(isConnected)
+            initialize();
+        else
+            Toast.makeText(getActivity(), "Please check the internet connection and try again!", Toast.LENGTH_LONG).show();
+
     }
 
     private void initialize(){
@@ -106,7 +132,8 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             new Thread(){
                 public void run(){
                     try {
-                        posts.addAll(postHolder.fetchPosts());
+                        page =1;
+                        posts.addAll(postHolder.fetchPosts(page));
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
@@ -119,7 +146,23 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 }
             }.start();
         }else{
-            createAdapter();
+            new Thread(){
+                public void run(){
+                    try {
+                        int size = posts.size();
+                        page = (size/30) + 1;
+                        posts.addAll(postHolder.fetchPosts(page));
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            createAdapter();
+                        }
+                    });
+                }
+            }.start();
         }
     }
 
@@ -181,26 +224,42 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onRefresh() {
         swipeLayout.setRefreshing(false);
-        new Thread(){
-            public void run(){
-                try {
-                    posts.addAll(postHolder.fetchPosts());
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        if(isConnected) {
+            new Thread() {
+                public void run() {
 
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        createAdapter();
+
+                    try {
+                        int size = posts.size();
+                        page = (size / 30) + 1;
+                        posts.addAll(postHolder.fetchPosts(page));
+
+
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
                     }
-                });
 
-            }
-        }.start();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                createAdapter();
+
+                                Toast.makeText(getActivity(), "Please go to the bottom", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                }
+            }.start();
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Please check the internet connection and try again!", Toast.LENGTH_LONG).show();
+        }
     }
-
-
-
 
  }

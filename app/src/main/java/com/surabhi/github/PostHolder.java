@@ -13,13 +13,14 @@ import java.util.List;
 /**
  * Created by Surabhi Agrawal on 1/19/2017.
  */
+// For PostFrgment to get the data from
 public class PostHolder {
     String TAG = "PostHolder";
     /**
      * We will be fetching JSON data from the API.
      */
     private final String URL_TEMPLATE=
-            "https://api.github.com/repos/rails/rails/issues?sort=updated";
+            "https://api.github.com/repos/rails/rails/issues?sort=updated&page=";
 
     String url;
 
@@ -41,9 +42,11 @@ public class PostHolder {
      *
      * @return
      */
-    List<Post> fetchPosts() throws MalformedURLException {
+    List<Post> fetchPosts(int page) throws MalformedURLException {
         Log.d(TAG, "fetchPosts()");
         Log.d(TAG, "url:" + url);
+        url = url + page;
+        Log.d(TAG,url);
         String raw = RemoteData.readContents(url);
 
         if (raw == null)
@@ -89,8 +92,8 @@ public class PostHolder {
      * using the 'after' property
      * @return
      */
-    List<Post> fetchMorePosts() throws MalformedURLException {
-        generateURL();
-        return fetchPosts();
-    }
+//    List<Post> fetchMorePosts() throws MalformedURLException {
+//        generateURL();
+//        return fetchPosts();
+//    }
 }

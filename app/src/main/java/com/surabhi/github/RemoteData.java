@@ -23,22 +23,6 @@ public class RemoteData {
      * @return
      */
 
-//    public static HttpURLConnection getConnection(String url) {
-//        System.out.println("URL: " + url);
-//        HttpURLConnection hcon = null;
-//        try {
-//            hcon = (HttpURLConnection) new URL(url).openConnection();
-//            hcon.setReadTimeout(30000); // Timeout at 30 seconds
-//            hcon.setRequestProperty("User-Agent", "Alien V1.0");
-//        } catch (MalformedURLException e) {
-//            Log.e("getConnection()",
-//                    "Invalid URL: " + e.toString());
-//        } catch (IOException e) {
-//            Log.e("getConnection()",
-//                    "Could not connect: " + e.toString());
-//        }
-//        return hcon;
-//    }
 
     /**
      * A very handy utility method that reads the contents of a URL
@@ -58,10 +42,6 @@ public class RemoteData {
             httpURLConnection = (HttpURLConnection) url1.openConnection();
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.setReadTimeout(30000); // Timeout at 30 seconds
-//          httpURLConnection.setRequestProperty("User-Agent", "Alien V1.0");
-//            httpURLConnection.setDoOutput(false);
-//            httpURLConnection.setRequestProperty("Content-Type", "application/json");
-//            httpURLConnection.setRequestProperty("Accept", "application/json");
             BufferedReader bufferReader = new BufferedReader
                     (new InputStreamReader(httpURLConnection.getInputStream()));
             StringBuilder stringBuilder = new StringBuilder();
